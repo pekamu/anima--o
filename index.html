@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas - Imagem seguindo o mouse</title>
+  <style>
+    
+    body {
+      background-color: #dbeafe;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    canvas {
+      background-color: #ffffff;
+      border: 2px solid #333;
+    }
+
+    a {
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+  
+  <canvas id="areaDesenho" width="300" height="300"></canvas>
+
+  <script>
+    const canvas = document.getElementById("areaDesenho");
+    const ctx = canvas.getContext("2d");
+
+    
+    const imagem = new Image();
+    imagem.src = "img.png";
+
+    const LARGURA = 50;  
+    const ALTURA = 50;
+
+    
+    let centroX = canvas.width / 2;
+    let centroY = canvas.height / 2;
+
+    
+    function limitar(valor, minimo, maximo) {
+      return Math.min(Math.max(valor, minimo), maximo);
+    }
+
+    function desenhar() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      
+      const x = centroX - LARGURA / 2;
+      const y = centroY - ALTURA / 2;
+
+      if (imagem.complete && imagem.naturalWidth > 0) {
+        ctx.drawImage(imagem, x, y, LARGURA, ALTURA);
+      } else {
+       
+        ctx.fillStyle = "tomato";
+        ctx.fillRect(x, y, LARGURA, ALTURA);
+      }
+    }
+
+    
+    document.addEventListener("mousemove", function (evento) {
+      const caixa = canvas.getBoundingClientRect();
+
+      
+      const mouseX = evento.clientX - caixa.left - canvas.clientLeft;
+      const mouseY = evento.clientY - caixa.top - canvas.clientTop;
+
+     
+      centroX = limitar(mouseX, LARGURA / 2, canvas.width - LARGURA / 2);
+      centroY = limitar(mouseY, ALTURA / 2, canvas.height - ALTURA / 2);
+
+      desenhar();
+    });
+
+    imagem.onload = desenhar;
+    desenhar();
+  </script>
+</body>
+</html>
